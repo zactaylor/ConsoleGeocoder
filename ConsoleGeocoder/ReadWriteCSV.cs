@@ -6,39 +6,6 @@ using System.Text;
 namespace ConsoleGeocoder
 {
 
-    //static void WriteTest()
-    //{
-    //    // Write sample data to CSV file
-    //    using (CsvFileWriter writer = new CsvFileWriter(@"C:\WriteTest.csv"))
-    //    {
-    //        for (int i = 0; i < 100; i++)
-    //        {
-    //            CsvRow row = new CsvRow();
-    //            for (int j = 0; j < 5; j++)
-    //                row.Add(String.Format("Column{0}", j));
-    //            writer.WriteRow(row);
-    //        }
-    //    }
-    //}
-
-    //static void ReadTest()
-    //{
-    //    // Read sample data from CSV file
-    //    using (CsvFileReader reader = new CsvFileReader(@"C:\TestRead.csv"))
-    //    {
-    //        CsvRow row = new CsvRow();
-    //        while (reader.ReadRow(row))
-    //        {
-    //            foreach (string s in row)
-    //            {
-    //                Console.Write(s);
-    //                Console.Write(" ");
-    //            }
-    //            Console.WriteLine();
-    //        }
-    //    }
-    //}
-
 
     /// <summary>
     /// Class to store one CSV row

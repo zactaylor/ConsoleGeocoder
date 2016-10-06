@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ConsoleGeocoder.CensusModel;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,8 @@ namespace ConsoleGeocoder
             string readingFile = "";
             string writingFile = "";
             string consoleLineBreak = "\r\n";
-            //string readingFile = @"C:\Standardized_ 1650_NSM_RATA_2015_geo_SEND_Done.csv";
-            //string writingFile = @"C:\Standardized_ 1650_NSM_RATA_2015_geo_SEND_Done_RESULTS.csv";
-            //string readingFile = @"D:\Users\US27086\Desktop\First Financial Files\GT Analysis Files\FirstFinancial_2016_FL_MortgageLoans_GT_Combined_Geocodes.csv";
-            //string writingFile = @"D:\Users\US27086\Desktop\First Financial Files\GT Analysis Files\FirstFinancial_2016_FL_MortgageLoans_GT_Combined_Geocodes_Results.csv";
+
+            //Deal with the user and ask them what file to process
             Console.Title = "..::FFIEC Console Geocoder::..";
             Console.WriteLine("Welcome to the FFIEC Console Geocoder written by Zac Taylor");
             Console.WriteLine(consoleLineBreak);
@@ -31,7 +30,7 @@ namespace ConsoleGeocoder
             if (Path.GetExtension(readingFile) != ".csv")
             {
                 Console.WriteLine(consoleLineBreak);
-                Console.WriteLine("You didn't enter a .csv file so the application will now close.");
+                Console.WriteLine("You didn't enter a .csv file so this tool will now exit.");
                 CountDownToClose(5, true);
             }
 
@@ -62,28 +61,31 @@ namespace ConsoleGeocoder
                             //process the column titles
                             if (counter == 0)
                             {
-                                results.AppendLine("\"" + row[0] + "\",\"" + row[1] + "\",\"" + row[2] + "\",\"" + row[3] + "\",\"" + row[4] + "\",\"" + row[5] + "\",MSACode,StateCode,CountyCode,CensusTract,Source");
+                                results.AppendLine("\"" + row[0] + "\",\"" + row[1] + "\",\"" + row[2] + "\",\"" + row[3] + "\",\"" + row[4] + "\",\"" + row[5] + "\",MSACode,StateCode,CountyCode,CensusTract,Source,MSACode,StateCode,CountyCode,CensusTract,Source");
                                 File.WriteAllText(writingFile, results.ToString());
                                 counter++;
                             }
                             else
                             {
                                 string fullAddress = row[2] + " " + row[3] + ", " + row[4] + " " + row[5];
-                                string[] geocodeFFIEC = new string[5];
-                                geocodeFFIEC = GetGeocodeFFIEC(fullAddress, "2015");
-                                results.AppendLine("\"" + row[0] + "\",\"" + row[1] + "\",\"" + row[2] + "\",\"" + row[3] + "\",\"" + row[4] + "\",\"" + row[5] + "\"," + geocodeFFIEC[0] + "," + geocodeFFIEC[1] + "," + geocodeFFIEC[2] + "," + geocodeFFIEC[3] + "," + geocodeFFIEC[4]);
 
+                                //Geocode FFIEC
+                                string[] geocodeFFIEC = new string[5];
+                                string currentYear = DateTime.Now.Year.ToString();
+                                geocodeFFIEC = GetGeocodeFFIEC(fullAddress, currentYear);
+
+                                //Geocode Census.Gov
                                 string[] geocodeCensus = new string[5];
                                 geocodeCensus = GetGeocodeCensusDotGov(row[2], row[3], row[4], row[5]);
+
                                 results.AppendLine("\""+row[0] + "\",\"" + row[1] + "\",\"" + row[2] + "\",\"" + row[3] + "\",\"" + row[4] + "\",\"" + row[5] + "\"," + geocodeFFIEC[0] + "," + geocodeFFIEC[1] + "," + geocodeFFIEC[2] + "," + geocodeFFIEC[3] + "," + geocodeFFIEC[4] + "," + geocodeCensus[0] + "," + geocodeCensus[1] + "," + geocodeCensus[2] + "," + geocodeCensus[3] + "," + geocodeCensus[4]);
-                                Console.WriteLine(counter.ToString("0000000") + ": " + row[0] + ' ' + geocodeFFIEC[4]);
 
-
-                                counter++;
-                                Console.WriteLine(counter.ToString("0000000") + ": " + row[0] + ' ' + geocodeFFIEC[4]);
+                                
+                                Console.WriteLine(counter.ToString("0000000") + ": " + row[0] + ' ' + geocodeFFIEC[4] + ' ' + geocodeCensus[4]);
                                 //Thread.Sleep(2000);
 
                                 File.WriteAllText(writingFile, results.ToString());
+                                counter++;
                             }
                         }
                     }
@@ -201,24 +203,32 @@ namespace ConsoleGeocoder
             {
                 string searchParameters = "geographies/address?street=" + street + "&city=" + city + "&state=" + state + "&zip=" + zip + "&benchmark=Public_AR_Current&vintage=Current_Current&layers=8&format=json";
 
-                string URLAuth = "http://geocoding.geo.census.gov/geocoder/" + searchParameters;
-
+                string URLAuth = "https://geocoding.geo.census.gov/geocoder/" + searchParameters;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
                 using (WebClient webClient = new WebClient())
                 {
                     var json = webClient.DownloadString(URLAuth);
                     string valueOriginal = Convert.ToString(json);
-                    Console.WriteLine(json);
-                    //dynamic geo = JsonConvert.DeserializeObject<CensusGovGeocode>(json);
+                    CensusGovGeocode geo = JsonConvert.DeserializeObject<CensusGovGeocode>(json);
                     //dynamic geocodeInfo = JsonConvert.DeserializeObject(json);
-                    //JObject stuff = JObject.Parse(json);
-                    //Console.WriteLine(stuff["addressMatches"]["geographies"]["Census Tracts"]["STATE"]);
-
-                    //result[0] = "sMSACode";
-                    //result[1] = "info.sStateCode";
-                    //result[2] = "COUNTY";
-                    //result[3] = "info.sTractCode";
-                    //result[4] = "Census";
-
+                    
+                    if (geo.Result?.AddressMatches.Any() ?? false)
+                    {
+                        var tractInfo = geo.Result.AddressMatches.FirstOrDefault().Geographies.CensusTracts.FirstOrDefault();
+                        result[0] = tractInfo.OBJECTID;
+                        result[1] = tractInfo.STATE;
+                        result[2] = tractInfo.COUNTY;
+                        result[3] = tractInfo.BASENAME;
+                        result[4] = "Census.gov";
+                    } else
+                    {
+                        //NOT found programmatically form FFIEC website
+                        result[0] = "";
+                        result[1] = "";
+                        result[2] = "";
+                        result[3] = "";
+                        result[4] = "Address Not Found";
+                    }
                 }
 
             }
