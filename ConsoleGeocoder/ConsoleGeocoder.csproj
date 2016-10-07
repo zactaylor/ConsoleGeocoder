@@ -79,6 +79,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CensusGovGeocode.cs" />
+    <Compile Include="GeocodeAddress.cs" />
+    <Compile Include="GeocodeItem.cs" />
+    <Compile Include="GeocodeServiceCensusDotGov.cs" />
+    <Compile Include="GeocodeServiceFFIEC.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadWriteCSV.cs" />
