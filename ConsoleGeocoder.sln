@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleGeocoder", "ConsoleGeocoder\ConsoleGeocoder.csproj", "{0E44AA40-66A8-46C6-BFDE-C2B7FDA4FB40}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gtus.Etools.FairLender.GeocodingService", "..\FairLending\Gtus.Etools.FairLender.GeocodingService\Gtus.Etools.FairLender.GeocodingService.csproj", "{B07BA342-DAAB-42D1-8A63-B2EFE9B1DC91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{0E44AA40-66A8-46C6-BFDE-C2B7FDA4FB40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E44AA40-66A8-46C6-BFDE-C2B7FDA4FB40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E44AA40-66A8-46C6-BFDE-C2B7FDA4FB40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B07BA342-DAAB-42D1-8A63-B2EFE9B1DC91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B07BA342-DAAB-42D1-8A63-B2EFE9B1DC91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B07BA342-DAAB-42D1-8A63-B2EFE9B1DC91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B07BA342-DAAB-42D1-8A63-B2EFE9B1DC91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
