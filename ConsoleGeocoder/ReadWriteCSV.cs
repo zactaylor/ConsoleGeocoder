@@ -48,7 +48,8 @@ namespace ConsoleGeocoder
                 if (value == null)
                 {
                     builder.Append("");
-                }else if (value.IndexOfAny(new char[] { '"', ',' }) != -1)
+                }
+                else if (value.IndexOfAny(new[] { '"', ',' }) != -1)
                     builder.AppendFormat("\"{0}\"", value.Replace("\"", "\"\""));
                 else
                     builder.Append(value);
